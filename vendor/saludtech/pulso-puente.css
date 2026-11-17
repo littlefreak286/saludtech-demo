@@ -1,0 +1,124 @@
+/* ==========================================================================
+   pulso-puente.css (2026-11-14) — lleva el centro de monitoreo y la guía al lenguaje «Pulso» sin reescribir su HTML/JS.
+   Se carga DESPUÉS de estilos.css / bootstrap / tema.css / custom-pro.css y redefine sus variables (tipografía, paleta)
+   más unos pocos ajustes de componentes. Fuentes locales (rutas relativas a este archivo).
+   ========================================================================== */
+@font-face { font-family: "Geist"; src: url("../fuentes/geist.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Geist Mono"; src: url("../fuentes/geist-mono.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Instrument Serif"; src: url("../fuentes/instrument-serif-italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+
+:root {
+  --pf: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --pf-mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+  /* custom-pro.css */
+  --pro-f-titulo: var(--pf); --pro-f-texto: var(--pf); --pro-f-mono: var(--pf-mono);
+  --pro-noc-0: #06090E; --pro-noc-1: #0A0F16; --pro-noc-2: #0C121A; --pro-noc-3: #111925;
+  --pro-noc-linea: rgba(148, 170, 196, .14); --pro-noc-linea-2: rgba(148, 170, 196, .26);
+  --pro-noc-texto: #EAF0F6; --pro-noc-texto-2: #A3B1C2; --pro-noc-texto-3: #7D8B9C;
+  --pro-ok: #3DDBA5; --pro-info: #6CC4FF; --pro-aviso: #FFB347; --pro-alerta: #FF6B6B;
+  --pro-rejilla: rgba(148, 170, 196, .045);
+  --pro-noc-sombra: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 18px 40px -24px rgba(0, 0, 0, .75);
+  --pro-noc-sombra-alta: 0 1px 0 rgba(255, 255, 255, .05) inset, 0 26px 56px -26px rgba(0, 0, 0, .85);
+  --pro-foco: #3DDBA5;
+  /* tema.css */
+  --st-titulos: var(--pf);
+}
+
+/* ------------------------------------------------------------------ centro (estilos.css) */
+html.pro-centro {
+  --fondo: #06090E; --panel: #0C121A; --panel2: #111925; --panel3: #172231;
+  --borde: rgba(148, 170, 196, .14); --borde2: rgba(148, 170, 196, .26);
+  --t1: #EAF0F6; --t2: #A3B1C2; --t3: #7D8B9C;
+  --marca: #3DDBA5; --marca2: #2A9E7A; --s1: #6CC4FF; --s3: #3DDBA5;
+  --critica: #FF5C5C; --alta: #FF8A5B; --media: #FFB347; --bien: #3DDBA5;
+  --mono: var(--pf-mono); --radio: 16px;
+}
+html.pro-centro[data-tema="claro"] {
+  --fondo: #F5F7FA; --panel: #FFFFFF; --panel2: #F3F6F9; --panel3: #E8EDF3;
+  --borde: rgba(15, 30, 50, .11); --borde2: rgba(15, 30, 50, .22);
+  --t1: #0B1220; --t2: #3D4B5C; --t3: #5A6878; --marca: #0B8A63; --marca2: #08694B; --s1: #0A63B5; --bien: #0B8A63;
+  --pro-ok: #0B8A63; --pro-info: #0A63B5; --pro-aviso: #9A5B00; --pro-alerta: #C62E3A;
+}
+html.pro-centro body { font-family: var(--pf); font-size: 14.5px; letter-spacing: -.003em; font-feature-settings: "ss01", "cv11"; }
+html.pro-centro .mono { font-family: var(--pf-mono); }
+html.pro-centro .logo b, html.pro-centro .barra h1, html.pro-centro .tarjeta h2 { font-family: var(--pf); letter-spacing: -.02em; }
+html.pro-centro .barra h1 { font-weight: 650; letter-spacing: -.03em; }
+html.pro-centro .kpi .val { font-family: var(--pf); font-weight: 650; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+html.pro-centro .tarjeta { border-radius: 16px; }
+html.pro-centro .btn { border-radius: 999px; font-weight: 550; }
+html.pro-centro:not([data-tema="claro"]) .lateral { background: #080C12; border-right-color: rgba(148, 170, 196, .12); }
+html.pro-centro:not([data-tema="claro"]) .nav a.activo { background: rgba(61, 219, 165, .1); color: #EAF0F6; }
+html.pro-centro:not([data-tema="claro"]) .nav a.activo::before { background: #3DDBA5; box-shadow: none; }
+html.pro-centro:not([data-tema="claro"]) .barra { background: color-mix(in srgb, #06090E 85%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+html.pro-centro:not([data-tema="claro"]) .tarjeta { background: #0C121A; border-color: rgba(148, 170, 196, .14); }
+html.pro-centro:not([data-tema="claro"]) .btn.prim { background: #3DDBA5; color: #04150F; border-color: transparent; }
+html.pro-centro .estado-pill { font-family: var(--pf-mono); }
+html.pro-centro .logo .marca-pulso { flex: none; }
+
+/* ------------------------------------------------------------------ guía (Bootstrap + tema.css + custom-pro editorial) */
+html.pro-editorial { --bs-font-sans-serif: var(--pf); --bs-body-font-family: var(--pf); --bs-font-monospace: var(--pf-mono); --bs-border-radius: .75rem; --bs-border-radius-lg: 1rem; }
+html.pro-editorial[data-bs-theme="dark"] {
+  --st-verde: #3DDBA5; --st-verde-rgb: 61, 219, 165; --st-verde-claro: #5BE3B5; --st-verde-suave: rgba(61, 219, 165, .12);
+  --st-azul: #6CC4FF; --st-azul-rgb: 108, 196, 255; --st-azul-suave: rgba(108, 196, 255, .12);
+  --st-ambar: #FFB347; --st-ambar-suave: rgba(255, 179, 71, .13); --st-rojo: #FF6B6B; --st-rojo-suave: rgba(255, 107, 107, .13);
+  --st-cian: #6CC4FF; --st-cian-suave: rgba(108, 196, 255, .1);
+  --st-fondo: #06090E; --st-superficie: #0C121A; --st-superficie-2: #111925; --st-linea: rgba(148, 170, 196, .16);
+  --bs-body-bg: #06090E; --bs-body-color: #EAF0F6; --bs-emphasis-color: #FFFFFF; --bs-secondary-color: #A3B1C2; --bs-tertiary-color: #7D8B9C;
+  --bs-secondary-bg: #111925; --bs-tertiary-bg: #0C121A; --bs-border-color: rgba(148, 170, 196, .16); --bs-border-color-translucent: rgba(148, 170, 196, .16);
+  --bs-link-color: #6CC4FF; --bs-link-color-rgb: 108, 196, 255; --bs-link-hover-color: #EAF0F6; --bs-link-hover-color-rgb: 234, 240, 246;
+  --bs-code-color: #9FE6CC; --bs-primary: #3DDBA5; --bs-primary-rgb: 61, 219, 165;
+}
+html.pro-editorial[data-bs-theme="light"] {
+  --st-verde: #0B8A63; --st-verde-rgb: 11, 138, 99; --st-fondo: #F5F7FA; --st-superficie: #FFFFFF; --st-superficie-2: #F3F6F9; --st-linea: rgba(15, 30, 50, .12);
+  --bs-body-bg: #F5F7FA; --bs-body-color: #0B1220; --bs-secondary-color: #3D4B5C; --bs-link-color: #0A63B5; --bs-link-color-rgb: 10, 99, 181;
+}
+html.pro-editorial body { font-family: var(--pf); letter-spacing: -.003em; font-feature-settings: "ss01", "cv11"; }
+html.pro-editorial :is(h1, h2, h3, h4, .h1, .h2, .h3, .h4, .h5, .h6, .navbar-brand) { font-family: var(--pf); letter-spacing: -.025em; }
+html.pro-editorial :is(code, pre, kbd, .font-monospace) { font-family: var(--pf-mono); }
+html.pro-editorial .btn { border-radius: 999px; font-weight: 550; }
+html.pro-editorial[data-bs-theme="dark"] .btn-primary { --bs-btn-bg: #3DDBA5; --bs-btn-border-color: #3DDBA5; --bs-btn-color: #04150F; --bs-btn-hover-bg: #5BE3B5; --bs-btn-hover-border-color: #5BE3B5; --bs-btn-hover-color: #04150F; }
+.acento { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; letter-spacing: -.01em; color: var(--st-verde, #3DDBA5); }
+
+/* ------------------------------------------------------------------ portal de pacientes (identidad clínica CLARA, custom-pro .pro-clinico)
+   Para pacientes se queda claro y amable; comparte con el resto la tipografía Geist y el verde de «sano» (oscurecido para AA). */
+html.pro-clinico {
+  --pro-cl-papel: #F5F7FA; --pro-cl-niebla: #EEF2F6; --pro-cl-superficie: #FFFFFF;
+  --pro-cl-tinta: #0B1220; --pro-cl-tinta-2: #3D4B5C; --pro-cl-tinta-3: #5A6878;
+  --pro-cl-linea: rgba(15, 30, 50, .1); --pro-cl-linea-2: rgba(15, 30, 50, .18);
+  --pro-cl-marca: #0B8A63; --pro-cl-marca-2: #08694B; --pro-cl-marca-suave: #E3F5EE; --pro-cl-azul: #0E1A24;
+  --st-verde: #0B8A63; --st-verde-rgb: 11, 138, 99; --st-azul: #0E1A24;
+  --bs-font-sans-serif: var(--pf); --bs-body-font-family: var(--pf); --bs-font-monospace: var(--pf-mono); --bs-body-bg: #F5F7FA; --bs-body-color: #0B1220;
+  --bs-primary: #0B8A63; --bs-primary-rgb: 11, 138, 99; --bs-link-color: #0A63B5; --bs-link-color-rgb: 10, 99, 181;
+}
+html.pro-clinico body { font-family: var(--pf); letter-spacing: -.003em; font-feature-settings: "ss01", "cv11"; }
+html.pro-clinico :is(h1, h2, h3, h4, .h1, .h2, .h3, .h4, .display-4, .display-5, .display-6, .navbar-brand) { font-family: var(--pf); letter-spacing: -.03em; }
+html.pro-clinico :is(code, pre, kbd) { font-family: var(--pf-mono); }
+html.pro-clinico .btn { border-radius: 999px; font-weight: 600; }
+html.pro-clinico .btn-primary { --bs-btn-bg: #0B8A63; --bs-btn-border-color: #0B8A63; --bs-btn-hover-bg: #08694B; --bs-btn-hover-border-color: #08694B; --bs-btn-active-bg: #08694B; }
+
+/* ------------------------------------------------------------------ centro en móvil y tableta (≤ 1000 px)
+   Antes el menú lateral ocupaba toda la primera pantalla del celular. Ahora es una franja fija y desplazable. */
+@media (max-width: 1000px) {
+  html.pro-centro .lateral { position: sticky; top: 0; z-index: 30; height: auto; padding: 8px 10px; flex-direction: row; align-items: center; gap: 8px;
+    overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; border-right: 0; border-bottom: 1px solid var(--borde); }
+  html.pro-centro .lateral::-webkit-scrollbar { display: none; }
+  html.pro-centro .lateral .logo { border: 0; padding: 0; margin: 0; flex: none; }
+  html.pro-centro .lateral .logo div, html.pro-centro .pie-lat, html.pro-centro .nav .grupo { display: none; }
+  html.pro-centro .nav { display: flex; gap: 4px; }
+  html.pro-centro .nav a { white-space: nowrap; padding: 8px 12px; min-height: 40px; }
+  html.pro-centro .nav a.activo::before { left: 12px; right: 12px; top: auto; bottom: 2px; width: auto; height: 2px; }
+  html.pro-centro .barra { flex-wrap: wrap; gap: 10px; position: static; }   /* la franja del menú ya es fija */
+  html.pro-centro .barra .der { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+  html.pro-centro .c6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html.pro-centro .tarjeta h2 { flex-wrap: wrap; row-gap: 6px; }
+  html.pro-centro .tarjeta h2 small { flex-basis: 100%; margin-left: 0; }
+  html.pro-centro .tarjeta h2 .der { margin-left: 0; }
+  html.pro-centro .contenido { padding-left: 14px; padding-right: 14px; }
+}
+/* barra superior del portal: cada dato en una línea; si no caben, pasa a otra fila entera (no se parte cada dato) */
+html.pro-clinico .utilidades { font-size: .8rem; }
+html.pro-clinico .utilidades .container-xl { flex-wrap: wrap; row-gap: 4px; padding-top: 6px; padding-bottom: 6px; }
+html.pro-clinico .utilidades .d-flex { gap: 1.1rem !important; flex-wrap: wrap; row-gap: 4px; align-items: center; }
+html.pro-clinico .utilidades span, html.pro-clinico .utilidades a, html.pro-clinico .rotulo-lab-portal { white-space: nowrap; }

@@ -1,0 +1,19 @@
+Librerías incluidas en esta carpeta (descargadas el 2026-11-14 de cdn.jsdelivr.net, versiones fijas):
+  Bootstrap 5.3.3            MIT   https://getbootstrap.com   (SRI verificado: css QWTKZyjp…, js YvpcrYf0…)
+  Bootstrap Icons 1.11.3     MIT   https://icons.getbootstrap.com
+  Inter (variable)           OFL   @fontsource-variable/inter@5.0.16
+  Plus Jakarta Sans (var.)   OFL   @fontsource-variable/plus-jakarta-sans@5.0.19
+  JetBrains Mono (variable)  OFL   @fontsource-variable/jetbrains-mono@5.0.19
+  three.js r160 (complementos) MIT three@0.160.0/examples/jsm: OrbitControls, EffectComposer, RenderPass, ShaderPass,
+      MaskPass, Pass, UnrealBloomPass, OutputPass, CopyShader, LuminosityHighPassShader, OutputShader, RoomEnvironment
+      y CSS2DRenderer (HUD 3D de la consola)
+      (en three/, con los import cambiados a ../../three.module.min.js; licencia en three/LICENSE-three.txt)
+  GSAP 3.13.0 (gsap.min.js, ScrollTrigger, SplitText, DrawSVGPlugin)  licencia estándar «sin costo» de GreenSock  https://gsap.com/standard-license  (en gsap/)
+saludtech/ es propio: tema.css (colores, fuentes, ajustes), custom-pro.css (diseño de producción: identidades NOC,
+clínica y editorial; v2 «Premium MedTech» con bento y cristal), movimiento.js (aparición al hacer scroll y botones
+magnéticos, sobre GSAP) e img/ (iconos SVG que Bootstrap dibujaría con data:,
+que la CSP del portal no permite).
+Se sirven desde el mismo servidor (CSP 'self'), sin depender de internet.
+
+== Añadidas el 2026-11-14 (rediseño «Pulso»), paquetes npm de Fontsource, licencia SIL OFL 1.1:
+geist.woff2 (@fontsource-variable/geist 5.3.0), geist-mono.woff2 (@fontsource-variable/geist-mono 5.3.0), instrument-serif-italic.woff2 (@fontsource/instrument-serif 5.3.0)

@@ -1,0 +1,6 @@
+GSAP 3.12.5 (https://gsap.com), descargado el 2026-11-14 de cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js.
+Licencia estándar «sin costo» de GreenSock: https://gsap.com/standard-license (uso educativo y no comercial permitido).
+Se sirven desde el mismo servidor (CSP self), sin internet.
+
+GSAP 3.13.0 (npm gsap@3.13.0, 2026-11-15): gsap.min.js + ScrollTrigger.min.js + SplitText.min.js + DrawSVGPlugin.min.js.
+Desde la 3.13 todos los plugins son gratis (licencia estándar «no charge»: https://gsap.com/standard-license).

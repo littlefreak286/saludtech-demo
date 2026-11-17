@@ -1,0 +1,117 @@
+/* SaludTech · tema común sobre Bootstrap 5.3.3 (2026-11-14).
+   Fuentes y librerías incluidas en vendor/: funciona sin internet y respeta la CSP 'self'.
+   Colores de marca: verde #14a37f / #0f8a6c, azul #0b3d5c. Claro y oscuro con data-bs-theme. */
+@font-face{font-family:"Inter";src:url(../fuentes/inter.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Plus Jakarta Sans";src:url(../fuentes/jakarta.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(../fuentes/jetbrains-mono.woff2) format("woff2");font-weight:100 800;font-style:normal;font-display:swap}
+
+:root,[data-bs-theme=light]{
+  --st-verde:#0f8a6c; --st-verde-rgb:15,138,108; --st-verde-claro:#14a37f; --st-verde-suave:#e2f4ee;
+  --st-azul:#0b3d5c; --st-azul-rgb:11,61,92; --st-azul-suave:#e4eef5;
+  --st-ambar:#b06d00; --st-ambar-suave:#fdf1dc; --st-rojo:#c03a3a; --st-rojo-suave:#fbe8e8;
+  --st-cian:#0b7285; --st-cian-suave:#e3f3f6;
+  --st-fondo:#f3f6f8; --st-superficie:#ffffff; --st-superficie-2:#f6f9fa; --st-linea:#dde5ea;
+  --st-titulos:"Plus Jakarta Sans","Inter",system-ui,sans-serif;
+  --st-sombra:0 1px 2px rgba(11,61,92,.06),0 10px 28px rgba(11,61,92,.08);
+  --st-sombra-alta:0 18px 44px rgba(11,61,92,.16);
+  --bs-font-sans-serif:"Inter",system-ui,-apple-system,"Segoe UI","Noto Sans",sans-serif;
+  --bs-font-monospace:"JetBrains Mono","DejaVu Sans Mono",Consolas,monospace;
+  --bs-body-font-size:.975rem; --bs-body-line-height:1.6;
+  --bs-body-bg:var(--st-fondo); --bs-body-color:#152634; --bs-secondary-color:rgba(21,38,52,.68);
+  --bs-border-color:var(--st-linea); --bs-border-radius:.65rem; --bs-border-radius-lg:.95rem; --bs-border-radius-xl:1.25rem;
+  --bs-primary:#0f8a6c; --bs-primary-rgb:15,138,108; --bs-primary-text-emphasis:#09523f; --bs-primary-bg-subtle:#e2f4ee; --bs-primary-border-subtle:#a9dccb;
+  --bs-link-color:#0f8a6c; --bs-link-color-rgb:15,138,108; --bs-link-hover-color:#0a6a53; --bs-link-hover-color-rgb:10,106,83;
+  --bs-focus-ring-color:rgba(15,138,108,.3);
+  --bs-tertiary-bg:#eef3f6; --bs-secondary-bg:#e8eef2;
+}
+[data-bs-theme=dark]{
+  --st-verde:#39c99e; --st-verde-rgb:57,201,158; --st-verde-suave:#11302a;
+  --st-azul:#8cc1e3; --st-azul-rgb:140,193,227; --st-azul-suave:#13283a;
+  --st-ambar:#e9b44f; --st-ambar-suave:#2d2513; --st-rojo:#ef7f7f; --st-rojo-suave:#311a1b;
+  --st-cian:#5cc6d8; --st-cian-suave:#10282e;
+  --st-fondo:#0a1216; --st-superficie:#101b20; --st-superficie-2:#142228; --st-linea:#22343c;
+  --st-sombra:0 1px 0 rgba(255,255,255,.03) inset,0 12px 30px rgba(0,0,0,.35);
+  --st-sombra-alta:0 22px 50px rgba(0,0,0,.5);
+  --bs-body-bg:var(--st-fondo); --bs-body-color:#e2ebee; --bs-secondary-color:rgba(226,235,238,.66);
+  --bs-border-color:var(--st-linea);
+  --bs-primary:#39c99e; --bs-primary-rgb:57,201,158; --bs-primary-text-emphasis:#8fe3c8; --bs-primary-bg-subtle:#11302a; --bs-primary-border-subtle:#1d5546;
+  --bs-link-color:#39c99e; --bs-link-color-rgb:57,201,158; --bs-link-hover-color:#7fe0c2; --bs-link-hover-color-rgb:127,224,194;
+  --bs-tertiary-bg:#121f25; --bs-secondary-bg:#16252c;
+}
+body{background:var(--bs-body-bg);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,.display-1,.display-2,.display-3,.display-4,.display-5,.display-6,.navbar-brand{font-family:var(--st-titulos);letter-spacing:-.02em;text-wrap:balance}
+code,kbd,pre,.font-monospace{font-family:var(--bs-font-monospace)}
+code{color:var(--st-azul);background:var(--st-azul-suave);padding:.1em .38em;border-radius:.35rem;font-size:.86em;overflow-wrap:anywhere}
+.btn-primary{--bs-btn-bg:var(--st-verde);--bs-btn-border-color:var(--st-verde);--bs-btn-hover-bg:#0b7259;--bs-btn-hover-border-color:#0b7259;--bs-btn-active-bg:#095e4a;--bs-btn-active-border-color:#095e4a;--bs-btn-disabled-bg:var(--st-verde);--bs-btn-disabled-border-color:var(--st-verde);--bs-btn-focus-shadow-rgb:15,138,108}
+[data-bs-theme=dark] .btn-primary{--bs-btn-color:#04170f;--bs-btn-hover-color:#04170f;--bs-btn-active-color:#04170f;--bs-btn-hover-bg:#5ad6b0;--bs-btn-hover-border-color:#5ad6b0}
+.btn-outline-primary{--bs-btn-color:var(--st-verde);--bs-btn-border-color:var(--st-verde);--bs-btn-hover-bg:var(--st-verde);--bs-btn-hover-border-color:var(--st-verde);--bs-btn-active-bg:var(--st-verde)}
+.btn-azul{--bs-btn-color:#fff;--bs-btn-bg:#0b3d5c;--bs-btn-border-color:#0b3d5c;--bs-btn-hover-color:#fff;--bs-btn-hover-bg:#11557f;--bs-btn-hover-border-color:#11557f;--bs-btn-active-bg:#11557f}
+.text-verde{color:var(--st-verde)!important} .text-azul{color:var(--st-azul)!important}
+.bg-verde-suave{background:var(--st-verde-suave)!important} .bg-azul-suave{background:var(--st-azul-suave)!important}
+.bg-superficie{background:var(--st-superficie)!important}
+.card{--bs-card-bg:var(--st-superficie);--bs-card-border-color:var(--st-linea);box-shadow:var(--st-sombra)}
+.card-hover{transition:transform 200ms var(--ease-out),box-shadow 200ms var(--ease-out),border-color 150ms ease}
+@media (hover:hover) and (pointer:fine){.card-hover:hover{transform:translateY(-2px);box-shadow:var(--st-sombra-alta);border-color:rgba(var(--st-verde-rgb),.45)}}
+.card-hover:active{transform:scale(.99)}
+.icono-cuadro{width:46px;height:46px;border-radius:.8rem;display:inline-grid;place-items:center;font-size:1.35rem;flex:none}
+.ic-verde{background:var(--st-verde-suave);color:var(--st-verde)} .ic-azul{background:var(--st-azul-suave);color:var(--st-azul)}
+.ic-ambar{background:var(--st-ambar-suave);color:var(--st-ambar)} .ic-rojo{background:var(--st-rojo-suave);color:var(--st-rojo)}
+.ic-cian{background:var(--st-cian-suave);color:var(--st-cian)} .ic-gris{background:var(--bs-tertiary-bg);color:var(--bs-secondary-color)}
+.ceja{font:700 .74rem/1.2 var(--bs-font-sans-serif);letter-spacing:.14em;text-transform:uppercase;color:var(--st-verde)}
+.punto-vivo{display:inline-block;width:.6rem;height:.6rem;border-radius:50%;background:var(--bs-secondary-color)}
+.punto-vivo.ok{background:#22c38e;box-shadow:0 0 0 0 rgba(34,195,142,.6);animation:latido 1.8s infinite}
+.punto-vivo.mal{background:var(--st-rojo)}
+@keyframes latido{0%{box-shadow:0 0 0 0 rgba(34,195,142,.55)}75%{box-shadow:0 0 0 .55rem rgba(34,195,142,0)}100%{box-shadow:0 0 0 0 rgba(34,195,142,0)}}
+
+/* Bootstrap dibuja algunos iconos con imágenes data:; la CSP del portal (img-src 'self') no las admite: se usan SVG locales. */
+.navbar-toggler-icon{background-image:url(img/menu.svg)}
+[data-bs-theme=dark] .navbar-toggler-icon,.navbar-dark .navbar-toggler-icon,[data-bs-theme=dark] .navbar .navbar-toggler-icon{background-image:url(img/menu-claro.svg)}
+.form-select{background-image:url(img/flecha.svg)}
+.accordion-button::after,.accordion-button:not(.collapsed)::after{background-image:url(img/flecha.svg)}
+.form-check-input:checked[type=checkbox]{background-image:url(img/check.svg)}
+.btn-close{background-image:url(img/cerrar.svg)}
+.progress,.progress-stacked{--bs-progress-bar-bg:var(--st-verde)}
+.spinner-border.text-primary{color:var(--st-verde)!important}
+.form-control:focus,.form-select:focus{border-color:rgba(var(--st-verde-rgb),.55);box-shadow:0 0 0 .2rem rgba(var(--st-verde-rgb),.18)}
+.form-check-input:checked{background-color:var(--st-verde);border-color:var(--st-verde)}
+.nav-pills{--bs-nav-pills-link-active-bg:var(--st-verde)}
+.page-link{--bs-pagination-color:var(--st-verde)}
+
+/* ---------- v2 (2026-11-14): movimiento y superficies del navegador ----------
+   Criterios de las skills instaladas: impeccable (craft-floor: superficies del navegador, estados, contraste),
+   Emil Kowalski (curvas propias, pulsación scale(.97), < 300 ms, hover solo con ratón, origen del menú) y
+   taste-skill (tarjetas que suben 2 px, botones que responden, una entrada al cargar, nada aparece al hacer scroll). */
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-in-out:cubic-bezier(.77,0,.175,1);--ease-drawer:cubic-bezier(.32,.72,0,1)}
+::selection{background:rgba(var(--st-verde-rgb),.24);color:inherit}
+html{caret-color:var(--st-verde);scrollbar-color:color-mix(in srgb,var(--bs-secondary-color) 40%,transparent) transparent;scroll-behavior:smooth}
+a{text-underline-offset:.22em;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--st-verde);outline-offset:2px}
+.btn:focus-visible,.form-control:focus-visible,.form-select:focus-visible,.nav-link:focus-visible{outline:2px solid var(--st-verde);outline-offset:2px;box-shadow:none}
+table,.table,code,kbd,.font-monospace{font-variant-numeric:tabular-nums}
+.btn{transition:transform 160ms var(--ease-out),background-color 150ms ease,border-color 150ms ease,color 150ms ease,box-shadow 150ms ease}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled,.btn.disabled{opacity:.55}
+.navbar .dropdown-menu.show{animation:st-pop 180ms var(--ease-out);transform-origin:top left}
+.navbar .dropdown-menu-end.show{transform-origin:top right}
+@keyframes st-pop{from{opacity:0;transform:scale(.97) translateY(-4px)}}
+.toast.showing,.toast.show{transition:opacity 200ms var(--ease-out)}
+/* una sola entrada al cargar, en la portada (no se repite al hacer scroll) */
+[data-enter] > *{animation:st-entra 560ms var(--ease-out) both}
+[data-enter] > *:nth-child(2){animation-delay:70ms} [data-enter] > *:nth-child(3){animation-delay:120ms}
+[data-enter] > *:nth-child(4){animation-delay:160ms} [data-enter] > *:nth-child(5){animation-delay:190ms}
+@keyframes st-entra{from{opacity:0;transform:translateY(10px);filter:blur(4px)}}
+/* flecha de los enlaces que avanzan: se desplaza 2 px con ratón */
+.ir i,.flecha-ir{transition:transform 200ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){a:hover .ir i,a:hover .flecha-ir{transform:translateX(2px)}}
+/* táctil: objetivos de 44 px */
+@media (pointer:coarse){.btn,.nav-link,.dropdown-item,.form-control,.form-select,.list-group-item-action{min-height:44px}}
+/* menos movimiento: se quitan desplazamientos y escalas, se conservan los cambios de color y opacidad */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  [data-enter] > *{animation:st-aparece 200ms ease both;animation-delay:0ms!important}
+  .navbar .dropdown-menu.show{animation:none}
+  .btn:active:not(:disabled),.card-hover:hover,.card-hover:active{transform:none}
+  .punto-vivo.ok{animation:none}
+}
+@keyframes st-aparece{from{opacity:0}}
+@media (max-width:575.98px){.container,.container-sm,.container-md,.container-lg,.container-xl,.container-xxl{--bs-gutter-x:2rem}}

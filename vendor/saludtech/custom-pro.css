@@ -1,0 +1,619 @@
+/* ===========================================================================
+   custom-pro.css — SaludTech Perú (2026-11-14)
+   Capa de diseño de producción sobre Bootstrap 5.3.3 + tema.css. No cambia
+   ningún HTML funcional: cada página elige su identidad con una clase en <html>.
+
+     .pro-noc.pro-inicio   Inicio de la demo (sin Bootstrap, siempre oscuro; maquetación en /inicio.css)
+     .pro-noc.pro-centro   Centro de monitoreo + Laboratorio de hacking (CSS propio)
+     .pro-clinico          Portal de pacientes: páginas estáticas y paneles de la app
+     .pro-editorial        Guía de la demo (claro y oscuro)
+
+   Criterios (skills instaladas en .claude/skills):
+   - impeccable: /bolder (un solo protagonista por identidad), /polish (estados,
+     foco, contraste, tokens), /animate (movimiento solo para estado y respuesta);
+     sin etiquetas en mayúsculas sobre los títulos ni bordes laterales de color.
+   - frontend-design / ui-ux-pro-max: tokens semánticos, contraste 4.5:1,
+     objetivos táctiles de 44 px, sin emojis, prefers-reduced-motion.
+   - Emil Kowalski: pulsación scale(.97), hover solo con ratón, < 300 ms,
+     easing de salida cubic-bezier(.23,1,.32,1).
+   Todo local: sin CDN, sin fuentes externas, respeta la CSP del portal.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------- 1. tokens */
+:root{
+  --pro-ease-out:cubic-bezier(.23,1,.32,1);
+  --pro-ease-io:cubic-bezier(.65,0,.35,1);
+  --pro-t-1:120ms; --pro-t-2:180ms; --pro-t-3:260ms;
+  --pro-r-chip:8px; --pro-r-ctrl:12px; --pro-r-card:18px; --pro-r-bloque:24px;
+  --pro-f-titulo:"Plus Jakarta Sans","Inter",system-ui,sans-serif;
+  --pro-f-texto:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --pro-f-mono:"JetBrains Mono","DejaVu Sans Mono",Consolas,monospace;
+
+  /* clínico (luz) */
+  --pro-cl-papel:#f4f8fa; --pro-cl-niebla:#ecf3f6; --pro-cl-superficie:#ffffff;
+  --pro-cl-tinta:#0c2131; --pro-cl-tinta-2:#4a5e6f; --pro-cl-tinta-3:#6f8292;
+  --pro-cl-linea:rgba(12,33,49,.085); --pro-cl-linea-2:rgba(12,33,49,.15);
+  --pro-cl-marca:#0f8a6c; --pro-cl-marca-2:#0b6f57; --pro-cl-marca-suave:#e3f4ee;
+  --pro-cl-azul:#0b3d5c;
+  --pro-cl-sombra-1:0 1px 1px rgba(12,33,49,.04),0 2px 4px -2px rgba(12,33,49,.08);
+  --pro-cl-sombra-2:0 1px 1px rgba(12,33,49,.04),0 6px 14px -6px rgba(12,33,49,.10),0 24px 44px -26px rgba(12,33,49,.24);
+  --pro-cl-sombra-3:0 2px 2px rgba(12,33,49,.04),0 12px 24px -10px rgba(12,33,49,.16),0 44px 70px -34px rgba(12,33,49,.34);
+
+  /* NOC (noche) */
+  --pro-noc-0:#050b12; --pro-noc-1:#09121c; --pro-noc-2:#0d1926; --pro-noc-3:#122233;
+  --pro-noc-linea:rgba(132,178,222,.12); --pro-noc-linea-2:rgba(132,178,222,.22);
+  --pro-noc-texto:#e3edf6; --pro-noc-texto-2:#9db0c3; --pro-noc-texto-3:#6c8196;
+  --pro-ok:#3ddc97; --pro-info:#56b8ff; --pro-aviso:#ffb547; --pro-alerta:#ff5f6d;
+  --pro-rejilla:rgba(86,184,255,.055);
+  --pro-noc-sombra:inset 0 1px 0 rgba(255,255,255,.04),0 1px 2px rgba(0,0,0,.5),0 18px 40px -20px rgba(0,0,0,.8);
+  --pro-noc-sombra-alta:inset 0 1px 0 rgba(255,255,255,.05),0 2px 4px rgba(0,0,0,.5),0 30px 60px -24px rgba(0,0,0,.9);
+}
+
+/* ------------------------------------------------------- 2. base común */
+:is(.pro-noc,.pro-clinico,.pro-editorial) :focus-visible{outline:2px solid var(--pro-foco,#14a37f);outline-offset:2px}
+:is(.pro-noc,.pro-clinico,.pro-editorial) :is(td,dd,.mono,code,kbd,time){font-variant-numeric:tabular-nums}
+:is(.pro-noc,.pro-clinico,.pro-editorial) body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+
+@keyframes pro-latido{0%{box-shadow:0 0 0 0 var(--pulso,rgba(61,220,151,.55))}70%{box-shadow:0 0 0 7px rgba(0,0,0,0)}100%{box-shadow:0 0 0 0 rgba(0,0,0,0)}}
+@keyframes pro-anillo{0%{transform:scale(.55);opacity:.85}100%{transform:scale(1.9);opacity:0}}
+@keyframes pro-brillo-svg{0%,100%{filter:drop-shadow(0 0 2px var(--pulso,#3ddc97))}50%{filter:drop-shadow(0 0 7px var(--pulso,#3ddc97))}}
+
+/* rejilla táctica: capa fija detrás del contenido (z-index -1 sobre el lienzo del documento) */
+.pro-noc body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(var(--pro-rejilla) 1px,transparent 1px),linear-gradient(90deg,var(--pro-rejilla) 1px,transparent 1px);
+  background-size:44px 44px;background-position:-1px -1px;
+  -webkit-mask-image:radial-gradient(ellipse 85% 65% at 50% 0%,#000 35%,transparent 100%);mask-image:radial-gradient(ellipse 85% 65% at 50% 0%,#000 35%,transparent 100%)}
+
+/* 3. (El Inicio de la demo tiene ahora su propia maquetación en /inicio.css, sobre las piezas de la sección 9.) */
+
+/* ===========================================================================
+   4. NOC — Centro de monitoreo y Laboratorio de hacking (CSS propio)
+   El centro conserva su tema claro (botón «Tema»); la identidad táctica se
+   aplica al oscuro, que es el predeterminado.
+   =========================================================================== */
+:root.pro-centro:not([data-tema="claro"]){
+  --fondo:var(--pro-noc-0); --panel:var(--pro-noc-1); --panel2:var(--pro-noc-2); --panel3:var(--pro-noc-3);
+  --borde:#162637; --borde2:#22374c; --t1:var(--pro-noc-texto); --t2:var(--pro-noc-texto-2); --t3:var(--pro-noc-texto-3);
+  --marca:var(--pro-cian); --bien:#34d27f; --sombra:var(--pro-noc-sombra); --radio:18px;
+  --pro-foco:var(--pro-cian);
+}
+:root.pro-centro[data-tema="claro"]{--pro-foco:#0d7a5f;--radio:14px}
+:root.pro-centro[data-tema="claro"] body::before{display:none}
+.pro-centro:not([data-tema="claro"]) body{background:radial-gradient(1000px 520px at 82% -10%,rgba(var(--pro-cian-rgb),.07),transparent 60%),var(--pro-noc-0) no-repeat}
+.pro-centro ::selection{background:color-mix(in srgb,var(--marca) 30%,transparent)}
+/* sin mayúsculas tipo plantilla en etiquetas y cabeceras */
+.pro-centro :is(.et,.nav .grupo,.tabla th,.matriz th,.cadena .cab){text-transform:none;letter-spacing:0}
+.pro-centro .et{font-size:12px;font-weight:650;color:var(--t2)}
+.pro-centro .nav .grupo{font-size:12px;font-weight:650;color:var(--t3);margin-top:16px}
+.pro-centro .tabla th{font-size:12px;font-weight:650}
+
+/* estructura: lateral y barra de cristal */
+.pro-centro:not([data-tema="claro"]) .lateral{background:linear-gradient(180deg,rgba(13,25,38,.92),rgba(7,14,22,.96));border-right-color:var(--pro-noc-linea)}
+.pro-centro .logo b{font-family:var(--pro-f-titulo);letter-spacing:-.02em}
+.pro-centro .nav a{transition:background-color var(--pro-t-2) ease,color var(--pro-t-2) ease}
+.pro-centro .nav a:active{transform:scale(.98)}
+.pro-centro:not([data-tema="claro"]) .nav a.activo{background:linear-gradient(90deg,rgba(var(--pro-cian-rgb),.14),rgba(var(--pro-cian-rgb),.02));color:#f2f7fb}
+.pro-centro:not([data-tema="claro"]) .nav a.activo::before{box-shadow:0 0 12px var(--pro-cian)}
+.pro-centro:not([data-tema="claro"]) .barra{background:rgba(5,11,18,.74);backdrop-filter:blur(14px) saturate(1.4);border-bottom-color:var(--pro-noc-linea)}
+.pro-centro .barra h1{font-family:var(--pro-f-titulo);font-size:19px;letter-spacing:-.025em}
+.pro-centro .vivo{font-family:var(--pro-f-mono);font-size:11.5px}
+.pro-centro .vivo i{--pulso:rgba(52,210,127,.6);animation:pro-latido 2s var(--pro-ease-out) infinite;box-shadow:none;background:var(--bien)}
+.pro-centro .vivo.caido i,.pro-centro .vivo.pausa i{animation:none}
+
+/* tarjetas: cristal oscuro con desenfoque real sobre la aurora y la rejilla (v2: pedido explícito del usuario) */
+.pro-centro:not([data-tema="claro"]) .tarjeta{background:linear-gradient(180deg,rgba(22,38,56,.6),rgba(9,17,27,.55));
+  border-color:rgba(150,220,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.5),0 26px 50px -28px rgba(0,0,0,.9);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+.pro-centro .tarjeta{border-radius:22px}
+.pro-centro .barra h1{font-size:22px;font-weight:800;letter-spacing:-.035em}
+.pro-centro .kpi .val{font-size:32px}
+.pro-centro .tarjeta h2{font-family:var(--pro-f-titulo);font-size:14.5px;letter-spacing:-.01em}
+.pro-centro .kpi .val{font-family:var(--pro-f-mono);font-weight:700;letter-spacing:-.04em}
+.pro-centro:not([data-tema="claro"]) .kpi.ok .val{text-shadow:0 0 22px rgba(61,220,151,.22)}
+.pro-centro .estado-pill{font-family:var(--pro-f-mono);font-size:11.5px;font-weight:700;border-radius:7px;padding:2px 8px 2px 7px}
+.pro-centro .estado-pill.bien::before,.pro-centro .estado-pill.mal::before,.pro-centro .estado-pill.aviso::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.pro-centro .estado-pill.bien::before{--pulso:rgba(52,210,127,.6);box-shadow:0 0 6px currentColor;animation:pro-latido 2.4s var(--pro-ease-out) infinite}
+.pro-centro .estado-pill .bi{display:none}
+.pro-centro .chip{font-size:11.5px;border-radius:7px}
+.pro-centro .chip.mitre{color:#a9dcff;border-color:rgba(86,184,255,.25);background:rgba(86,184,255,.07)}
+:root.pro-centro[data-tema="claro"] .chip.mitre{color:#11557f;background:#eaf3fa;border-color:#c9dcec}
+.pro-centro .mono{font-family:var(--pro-f-mono)}
+.pro-centro .tabla tbody tr{transition:background-color var(--pro-t-1) ease}
+@media (hover:hover) and (pointer:fine){.pro-centro .tabla tbody tr:hover{background:color-mix(in srgb,var(--marca) 5%,transparent)}}
+
+/* topología: el punto de cada máquina late con su color */
+.pro-centro .topo .nodo-t rect.caja{transition:fill var(--pro-t-2) ease,stroke var(--pro-t-2) ease}
+.pro-centro:not([data-tema="claro"]) .topo .nodo-t rect.caja{fill:rgba(13,25,38,.92)}
+.pro-centro .topo .nodo-t.arriba > circle,.pro-centro .topo .nodo-t.activo > circle{--pulso:#3ddc97;animation:pro-brillo-svg 2.2s var(--pro-ease-io) infinite}
+.pro-centro .topo .nodo-t.abajo > circle{--pulso:#ff5f6d;animation:pro-brillo-svg 1s var(--pro-ease-io) infinite}
+.pro-centro:not([data-tema="claro"]) .topo .nodo-t.activo rect.caja{filter:drop-shadow(0 0 10px rgba(var(--pro-cian-rgb),.4))}
+.pro-centro .topo .badge{font-family:var(--pro-f-mono);letter-spacing:.02em}
+
+/* botones */
+.pro-centro .btn{border-radius:10px;transition:background-color var(--pro-t-2) ease,border-color var(--pro-t-2) ease,color var(--pro-t-2) ease,box-shadow var(--pro-t-2) ease,transform var(--pro-t-1) var(--pro-ease-out)}
+.pro-centro .btn:active:not(:disabled){transform:scale(.97)}
+.pro-centro:not([data-tema="claro"]) .btn{background:rgba(13,25,38,.8);border-color:var(--pro-noc-linea-2)}
+.pro-centro:not([data-tema="claro"]) .btn.prim{background:linear-gradient(180deg,#7ae8ff,var(--pro-cian));border-color:var(--pro-cian);color:#02141b;
+  box-shadow:0 0 0 1px rgba(var(--pro-cian-rgb),.3),0 8px 24px -10px rgba(var(--pro-cian-rgb),.8),inset 0 1px 0 rgba(255,255,255,.45)}
+.pro-centro:not([data-tema="claro"]) .btn.peligro{background:rgba(255,95,109,.06);border-color:rgba(255,95,109,.55);color:#ff8b95}
+@media (hover:hover) and (pointer:fine){
+  .pro-centro:not([data-tema="claro"]) .btn:hover:not(:disabled){border-color:rgba(132,178,222,.45);background:rgba(18,34,51,.95)}
+  .pro-centro:not([data-tema="claro"]) .btn.prim:hover:not(:disabled){background:linear-gradient(180deg,#a3f0ff,#6fe3ff);border-color:#6fe3ff}
+}
+
+/* laboratorio de hacking: pasos, flujo y tarjetas de ataque */
+.pro-centro:not([data-tema="claro"]) .lab-pasos>div{background:rgba(13,25,38,.75);border-color:var(--pro-noc-linea)}
+.pro-centro .ataque .ico{border:1px solid var(--borde2);transition:box-shadow var(--pro-t-3) ease,border-color var(--pro-t-3) ease}
+.pro-centro .ataque .tit b,.pro-centro .ataque h3{font-family:var(--pro-f-titulo);letter-spacing:-.015em}
+.pro-centro .medalla{font-family:var(--pro-f-mono);letter-spacing:-.05em}
+.pro-centro:not([data-tema="claro"]) .medalla{text-shadow:0 0 26px rgba(var(--pro-cian-rgb),.35)}
+.pro-centro .consola,.pro-centro .crudo{font-family:var(--pro-f-mono)}
+.pro-centro:not([data-tema="claro"]) :is(.consola,.crudo){background:#03080d;border-color:var(--pro-noc-linea)}
+
+/* el estado manda: KPI y casillas de ataque brillan con el color de su dato (sin bordes gruesos de color) */
+.pro-centro:not([data-tema="claro"]) .kpi:has(.estado-pill.bien){border-color:rgba(61,220,151,.24);
+  background:radial-gradient(200px 120px at 100% 0,rgba(61,220,151,.13),transparent 70%),linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0) 32%),rgba(9,18,28,.84)}
+.pro-centro:not([data-tema="claro"]) .kpi:has(.estado-pill.mal){border-color:rgba(255,95,109,.3);
+  background:radial-gradient(200px 120px at 100% 0,rgba(255,95,109,.14),transparent 70%),linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0) 32%),rgba(9,18,28,.84)}
+.pro-centro .m-at{border-top-width:1px;transition:border-color var(--pro-t-3) ease,background-color var(--pro-t-3) ease,box-shadow var(--pro-t-3) ease}
+.pro-centro:not([data-tema="claro"]) .m-at{background:rgba(9,18,28,.84);box-shadow:var(--pro-noc-sombra)}
+.pro-centro:not([data-tema="claro"]) .m-at.bien{border-color:rgba(61,220,151,.35);background:radial-gradient(140px 90px at 100% 0,rgba(61,220,151,.16),transparent 70%),rgba(9,18,28,.84)}
+.pro-centro:not([data-tema="claro"]) .m-at.mal{border-color:rgba(255,95,109,.4);background:radial-gradient(140px 90px at 100% 0,rgba(255,95,109,.16),transparent 70%),rgba(9,18,28,.84)}
+.pro-centro:not([data-tema="claro"]) .m-at.aviso{border-color:rgba(255,181,71,.4);background:radial-gradient(140px 90px at 100% 0,rgba(255,181,71,.14),transparent 70%),rgba(9,18,28,.84)}
+.pro-centro .m-at em{letter-spacing:0;font-family:var(--pro-f-mono);font-size:11px}
+.pro-centro:not([data-tema="claro"]) .veredicto.bien{box-shadow:0 0 0 1px rgba(61,220,151,.1),0 10px 26px -14px rgba(61,220,151,.55)}
+.pro-centro:not([data-tema="claro"]) .veredicto.mal{box-shadow:0 0 0 1px rgba(255,95,109,.1),0 10px 26px -14px rgba(255,95,109,.55)}
+/* mapa de la topología sobre una retícula de puntos, como una consola de operaciones */
+.pro-centro:not([data-tema="claro"]) .topo{border-radius:12px;background-image:radial-gradient(rgba(132,178,222,.11) 1px,transparent 1.3px);background-size:18px 18px}
+
+/* avisos emergentes y tooltip */
+.pro-centro:not([data-tema="claro"]) #avisos > *{backdrop-filter:blur(12px)}
+.pro-centro .modal{border-radius:18px}
+
+/* ===========================================================================
+   5. Clínico — Portal de pacientes (páginas estáticas)
+   =========================================================================== */
+.pro-clinico{
+  --bs-body-bg:var(--pro-cl-papel); --bs-body-color:var(--pro-cl-tinta); --bs-secondary-color:var(--pro-cl-tinta-2);
+  --bs-border-color:var(--pro-cl-linea-2); --bs-tertiary-bg:var(--pro-cl-niebla);
+  --st-linea:var(--pro-cl-linea-2); --st-sombra:var(--pro-cl-sombra-2); --st-sombra-alta:var(--pro-cl-sombra-3);
+  --pro-foco:#0f8a6c;
+}
+.pro-clinico body{background:var(--pro-cl-papel);color:var(--pro-cl-tinta)}
+.pro-clinico ::selection{background:rgba(20,163,127,.2);color:var(--pro-cl-tinta)}
+.pro-clinico h1,.pro-clinico h2,.pro-clinico h3{letter-spacing:-.025em}
+
+/* barra y menú «El sistema» */
+.pro-clinico .barra-portal{background:rgba(255,255,255,.8);backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--pro-cl-linea);
+  box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 10px 30px -24px rgba(12,33,49,.35)}
+.pro-clinico .barra-portal .nav-link{color:var(--pro-cl-tinta-2);border-radius:10px}
+.pro-clinico .barra-portal .nav-link.active{background:var(--pro-cl-marca-suave);color:var(--pro-cl-marca-2)}
+@media (hover:hover) and (pointer:fine){.pro-clinico .barra-portal .nav-link:hover{background:var(--pro-cl-niebla);color:var(--pro-cl-tinta)}}
+.pro-clinico .menu-sistema{border:1px solid var(--pro-cl-linea);border-radius:20px;padding:.45rem;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(18px) saturate(1.4);box-shadow:var(--pro-cl-sombra-3);transform-origin:top right}
+.pro-clinico .menu-sistema .dropdown-item{border-radius:12px;transition:background-color var(--pro-t-1) ease}
+.pro-clinico .menu-sistema .dropdown-item i{display:grid;place-items:center;flex:none;width:34px;height:34px;margin:0;border-radius:10px;
+  background:var(--pro-cl-marca-suave);color:var(--pro-cl-marca);font-size:1rem;transition:transform var(--pro-t-2) var(--pro-ease-out)}
+.pro-clinico .menu-sistema .dropdown-item b{color:var(--pro-cl-tinta)}
+@media (hover:hover) and (pointer:fine){.pro-clinico .menu-sistema .dropdown-item:hover i{transform:scale(1.06)}}
+.pro-clinico .menu-sistema .dropdown-item:active{background:var(--pro-cl-niebla);transform:scale(.99)}
+.pro-clinico .menu-sistema .destacado{background:linear-gradient(120deg,var(--pro-cl-marca-suave),rgba(227,244,238,.3))}
+
+/* botones: pulsación, sombra de color en el principal */
+.pro-clinico .btn{border-radius:var(--pro-r-ctrl);font-weight:600;transition:color var(--pro-t-2) ease,background-color var(--pro-t-2) ease,border-color var(--pro-t-2) ease,box-shadow var(--pro-t-2) ease,transform var(--pro-t-1) var(--pro-ease-out)}
+.pro-clinico .btn.rounded-pill{border-radius:999px}
+.pro-clinico .btn:active{transform:scale(.97)}
+.pro-clinico .btn-primary{box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 1px 2px rgba(11,111,87,.3),0 8px 20px -10px rgba(15,138,108,.65)}
+@media (hover:hover) and (pointer:fine){.pro-clinico .btn-primary:hover{box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 2px 4px rgba(11,111,87,.3),0 14px 28px -12px rgba(15,138,108,.7)}}
+.pro-clinico .btn-outline-primary{--bs-btn-bg:#fff;border-color:rgba(15,138,108,.45)}
+.pro-clinico .btn-outline-secondary{--bs-btn-bg:#fff;--bs-btn-color:var(--pro-cl-tinta);--bs-btn-border-color:var(--pro-cl-linea-2);--bs-btn-hover-bg:var(--pro-cl-niebla);--bs-btn-hover-color:var(--pro-cl-tinta);--bs-btn-hover-border-color:rgba(12,33,49,.25)}
+
+/* portada luminosa: papel frío, trama de puntos clínica y la maqueta como pieza de cristal */
+.pro-clinico .portada-portal{position:relative;isolation:isolate;color:var(--pro-cl-tinta);padding:4.5rem 0 7.25rem;
+  background:radial-gradient(900px 420px at 88% -6%,rgba(20,163,127,.16),transparent 62%),radial-gradient(760px 380px at -6% 10%,rgba(11,92,138,.10),transparent 60%),
+  linear-gradient(180deg,#f8fbfc 0%,#eef5f7 100%)}
+.pro-clinico .portada-portal::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(12,33,49,.09) 1px,transparent 1.3px);background-size:22px 22px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 80% at 70% 30%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 70% 80% at 70% 30%,#000 20%,transparent 75%)}
+.pro-clinico .portada-portal h1,.pro-clinico .titular-portal{color:var(--pro-cl-tinta);letter-spacing:-.035em;font-size:clamp(2.3rem,5vw,3.75rem)}
+.pro-clinico .portada-portal .resalte{color:var(--pro-cl-marca-2)}
+.pro-clinico .portada-portal .lead{color:var(--pro-cl-tinta-2)}
+.pro-clinico .portada-portal .btn-light,.pro-clinico .portada-portal .btn-light:hover,.pro-clinico .portada-portal .btn-light:active{color:#fff}
+.pro-clinico .portada-portal .btn-outline-light,.pro-clinico .portada-portal .btn-outline-light:hover{color:var(--pro-cl-tinta)}
+.pro-clinico .portada-portal .btn-light{--bs-btn-color:#fff;--bs-btn-bg:var(--pro-cl-marca);--bs-btn-border-color:var(--pro-cl-marca);--bs-btn-hover-color:#fff;
+  --bs-btn-hover-bg:var(--pro-cl-marca-2);--bs-btn-hover-border-color:var(--pro-cl-marca-2);--bs-btn-active-bg:#095e4a;--bs-btn-active-color:#fff;
+  box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 10px 24px -12px rgba(15,138,108,.75)}
+.pro-clinico .portada-portal .btn-outline-light{--bs-btn-color:var(--pro-cl-tinta);--bs-btn-bg:rgba(255,255,255,.75);--bs-btn-border-color:var(--pro-cl-linea-2);
+  --bs-btn-hover-color:var(--pro-cl-tinta);--bs-btn-hover-bg:#fff;--bs-btn-hover-border-color:rgba(12,33,49,.28);--bs-btn-active-bg:#fff;--bs-btn-active-color:var(--pro-cl-tinta);
+  backdrop-filter:blur(6px);box-shadow:var(--pro-cl-sombra-1)}
+.pro-clinico .confianza span{color:var(--pro-cl-tinta-2);background:rgba(255,255,255,.8);border:1px solid var(--pro-cl-linea);box-shadow:var(--pro-cl-sombra-1)}
+.pro-clinico .confianza i{color:var(--pro-cl-marca)}
+.pro-clinico .maqueta{background:rgba(255,255,255,.86);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.9)!important;border-radius:24px;
+  box-shadow:0 0 0 1px var(--pro-cl-linea),var(--pro-cl-sombra-3)}
+.pro-clinico .flotante{background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border:1px solid var(--pro-cl-linea);border-radius:14px;box-shadow:var(--pro-cl-sombra-2)}
+.pro-clinico .franjas span{border-color:var(--pro-cl-linea-2);border-radius:9px;font-family:var(--pro-f-mono);font-size:.8rem}
+.pro-clinico .franjas .sel{box-shadow:0 6px 14px -6px rgba(15,138,108,.7)}
+
+/* cabeceras de páginas interiores: luminosas también */
+.pro-clinico .cabecera-int{position:relative;isolation:isolate;color:var(--pro-cl-tinta);
+  background:radial-gradient(760px 300px at 92% 0,rgba(20,163,127,.14),transparent 62%),linear-gradient(180deg,#f8fbfc,#eef5f7);border-bottom:1px solid var(--pro-cl-linea)}
+.pro-clinico .cabecera-int::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(rgba(12,33,49,.08) 1px,transparent 1.3px);
+  background-size:22px 22px;-webkit-mask-image:linear-gradient(90deg,transparent 30%,#000 100%);mask-image:linear-gradient(90deg,transparent 30%,#000 100%)}
+.pro-clinico .cabecera-int h1{color:var(--pro-cl-tinta);letter-spacing:-.035em}
+.pro-clinico .cabecera-int p{color:var(--pro-cl-tinta-2)}
+.pro-clinico .cabecera-int .breadcrumb{--bs-breadcrumb-divider-color:var(--pro-cl-tinta-3);--bs-breadcrumb-item-active-color:var(--pro-cl-tinta-2)}
+.pro-clinico .cabecera-int .breadcrumb a{color:var(--pro-cl-marca)}
+.pro-clinico .cabecera-int ::selection,.pro-clinico .portada-portal ::selection{background:rgba(20,163,127,.2);color:var(--pro-cl-tinta)}
+.pro-clinico .cabecera-int .icono-cab{background:#fff;box-shadow:var(--pro-cl-sombra-2);border:1px solid var(--pro-cl-linea)}
+
+/* accesos rápidos en bento: una pieza protagonista y tres de apoyo */
+.pro-clinico .panel-acciones{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"a a b c" "a a d d";gap:14px;
+  background:none;border:0;border-radius:0;box-shadow:none;overflow:visible}
+.pro-clinico .accion{position:relative;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;padding:1.15rem 1.2rem;
+  border:1px solid var(--pro-cl-linea);border-left:1px solid var(--pro-cl-linea);border-radius:var(--pro-r-card);background:#fff;box-shadow:var(--pro-cl-sombra-2);
+  transition:box-shadow var(--pro-t-3) var(--pro-ease-out),border-color var(--pro-t-2) ease,transform var(--pro-t-1) var(--pro-ease-out)}
+.pro-clinico .accion:nth-child(1){grid-area:a;grid-template-columns:1fr;grid-template-rows:auto 1fr auto;align-items:start;gap:1.2rem;padding:1.6rem;
+  color:#fff;border-color:transparent;background:radial-gradient(420px 220px at 100% 0,rgba(127,227,193,.35),transparent 60%),linear-gradient(150deg,#0f8a6c 0%,#0b6f57 55%,#0b3d5c 130%);
+  box-shadow:0 1px 0 rgba(255,255,255,.2) inset,0 18px 40px -18px rgba(11,111,87,.75)}
+.pro-clinico .accion:nth-child(2){grid-area:b} .pro-clinico .accion:nth-child(3){grid-area:c} .pro-clinico .accion:nth-child(4){grid-area:d}
+.pro-clinico .accion:nth-child(2),.pro-clinico .accion:nth-child(3){grid-template-columns:1fr;align-items:start;gap:.85rem}
+.pro-clinico .accion:nth-child(2) .flecha-ir,.pro-clinico .accion:nth-child(3) .flecha-ir{position:absolute;top:1.15rem;right:1.15rem}
+.pro-clinico .accion:nth-child(1) .icono-cuadro{width:52px;height:52px;font-size:1.45rem;background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.28)}
+.pro-clinico .accion:nth-child(1) .ac-texto b{color:#fff;font-size:1.45rem;letter-spacing:-.03em;margin-bottom:.35rem}
+.pro-clinico .accion:nth-child(1) .ac-texto span{color:rgba(240,251,247,.86);font-size:.95rem;max-width:34ch}
+.pro-clinico .accion:nth-child(1) .flecha-ir{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#fff;color:var(--pro-cl-marca-2);justify-self:end}
+.pro-clinico .ac-texto b{color:var(--pro-cl-tinta)}
+.pro-clinico .accion .flecha-ir{transition:transform var(--pro-t-2) var(--pro-ease-out),color var(--pro-t-2) ease}
+@media (hover:hover) and (pointer:fine){
+  .pro-clinico .accion:hover{box-shadow:var(--pro-cl-sombra-3);border-color:rgba(15,138,108,.3)}
+  .pro-clinico .accion:hover .flecha-ir{transform:translateX(3px);color:var(--pro-cl-marca)}
+  .pro-clinico .accion:nth-child(1):hover .flecha-ir{color:var(--pro-cl-marca-2)}
+}
+.pro-clinico .accion:active{transform:scale(.985);background:#fff}
+.pro-clinico .accion:nth-child(1):active{background:linear-gradient(150deg,#0f8a6c 0%,#0b6f57 55%,#0b3d5c 130%)}
+
+/* secciones, tarjetas y listas */
+.pro-clinico .seccion-blanca{background:#fff;border-color:var(--pro-cl-linea)}
+.pro-clinico .titulo-seccion{letter-spacing:-.03em;color:var(--pro-cl-tinta)}
+.pro-clinico .card{--bs-card-border-color:var(--pro-cl-linea);border-radius:var(--pro-r-card);box-shadow:var(--pro-cl-sombra-2)}
+.pro-clinico .card-hover,.pro-clinico .tarjeta-enlace{transition:box-shadow var(--pro-t-3) var(--pro-ease-out),border-color var(--pro-t-2) ease,transform var(--pro-t-2) var(--pro-ease-out)}
+@media (hover:hover) and (pointer:fine){.pro-clinico :is(.card-hover,.tarjeta-enlace):hover{box-shadow:var(--pro-cl-sombra-3);border-color:rgba(15,138,108,.3)}}
+.pro-clinico .stepper .num{font-family:var(--pro-f-mono);box-shadow:0 0 0 6px var(--pro-cl-papel),0 6px 14px -6px rgba(15,138,108,.6)}
+.pro-clinico .seccion-blanca .stepper .num{box-shadow:0 0 0 6px #fff,0 6px 14px -6px rgba(15,138,108,.6)}
+.pro-clinico .stepper h3,.pro-clinico .esp-fila b{color:var(--pro-cl-tinta)}
+.pro-clinico .esp-fila{border-radius:12px;padding:1rem .75rem}
+@media (hover:hover) and (pointer:fine){.pro-clinico .esp-fila:hover{background:var(--pro-cl-niebla)}}
+.pro-clinico .banda-datos{background:radial-gradient(600px 260px at 100% 0,rgba(20,163,127,.08),transparent 60%),#fff}
+.pro-clinico .accordion{--bs-accordion-border-color:var(--pro-cl-linea);--bs-accordion-border-radius:16px;--bs-accordion-inner-border-radius:15px;
+  --bs-accordion-active-bg:var(--pro-cl-marca-suave);--bs-accordion-active-color:var(--pro-cl-marca-2);--bs-accordion-btn-focus-box-shadow:0 0 0 .2rem rgba(15,138,108,.2)}
+.pro-clinico .accordion-item{background:#fff}
+.pro-clinico .accordion-button{font-weight:650}
+.pro-clinico .banda-cta{border-radius:var(--pro-r-bloque);background:radial-gradient(520px 260px at 100% 0,rgba(127,227,193,.3),transparent 60%),linear-gradient(130deg,#0f8a6c,#0b6f57 60%,#0b3d5c 140%);
+  box-shadow:0 1px 0 rgba(255,255,255,.2) inset,0 24px 48px -22px rgba(11,111,87,.7)}
+.pro-clinico .badge{font-weight:650;letter-spacing:0}
+.pro-clinico .table{--bs-table-hover-bg:rgba(15,138,108,.04)}
+.pro-clinico .table th{font-weight:650;color:var(--pro-cl-tinta-2)}
+
+/* formularios */
+.pro-clinico .form-control,.pro-clinico .form-select{border-radius:var(--pro-r-ctrl);border-color:var(--pro-cl-linea-2);min-height:46px;
+  transition:border-color var(--pro-t-2) ease,box-shadow var(--pro-t-2) ease}
+.pro-clinico .form-control:focus,.pro-clinico .form-select:focus{border-color:rgba(15,138,108,.6);box-shadow:0 0 0 4px rgba(15,138,108,.14)}
+.pro-clinico .form-label{font-weight:600;color:var(--pro-cl-tinta)}
+
+/* triaje: síntomas como interruptores claros */
+.pro-clinico .sintoma{border-color:var(--pro-cl-linea-2);border-radius:14px;box-shadow:var(--pro-cl-sombra-1)}
+.pro-clinico .btn-check:checked + .sintoma{background:var(--pro-cl-marca-suave);border-color:var(--pro-cl-marca);color:var(--pro-cl-marca-2);box-shadow:0 0 0 3px rgba(15,138,108,.12)}
+.pro-clinico .btn-check:checked + .sintoma.grave{background:#fdecec;border-color:#c03a3a;color:#8a2020;box-shadow:0 0 0 3px rgba(192,58,58,.12)}
+.pro-clinico .btn-check:focus-visible + .sintoma{outline:2px solid var(--pro-cl-marca);outline-offset:2px}
+
+/* ===========================================================================
+   6. Clínico — paneles de la app (login, paciente, médico, administrador)
+   =========================================================================== */
+.pro-clinico .lateral{border:1px solid var(--pro-cl-linea);border-radius:20px;box-shadow:var(--pro-cl-sombra-2);background:rgba(255,255,255,.92)}
+.pro-clinico .lateral .grupo-t{text-transform:none;letter-spacing:0;font:650 .76rem var(--pro-f-texto);color:var(--pro-cl-tinta-3)}
+.pro-clinico .lateral nav a{color:var(--pro-cl-tinta-2);border-radius:10px;min-height:40px}
+.pro-clinico .lateral nav a.activo{background:var(--pro-cl-marca-suave);color:var(--pro-cl-marca-2);box-shadow:inset 0 0 0 1px rgba(15,138,108,.18)}
+.pro-clinico .lateral nav a:active{transform:scale(.98)}
+.pro-clinico .lateral .nodo-info{background:var(--pro-cl-niebla);border:1px solid var(--pro-cl-linea)}
+.pro-clinico .lateral .nodo{font-family:var(--pro-f-mono);font-weight:700;color:var(--pro-cl-marca-2);background:var(--pro-cl-marca-suave);border:1px solid rgba(15,138,108,.22)}
+.pro-clinico .cab-app h1{color:var(--pro-cl-tinta);letter-spacing:-.035em}
+.pro-clinico .panel{border:1px solid var(--pro-cl-linea);border-radius:20px;box-shadow:var(--pro-cl-sombra-2);padding:1.5rem}
+.pro-clinico .panel h2{color:var(--pro-cl-tinta);letter-spacing:-.02em}
+/* KPI en bento: la primera cifra manda */
+.pro-clinico .kpi{grid-template-columns:1.35fr repeat(3,minmax(0,1fr));gap:14px}
+.pro-clinico .kpi>div{border:1px solid var(--pro-cl-linea);border-radius:18px;box-shadow:var(--pro-cl-sombra-2);padding:1.05rem 1.2rem}
+.pro-clinico .kpi>div:first-child{background:radial-gradient(260px 140px at 100% 0,rgba(20,163,127,.14),transparent 70%),#fff;border-color:rgba(15,138,108,.22)}
+.pro-clinico .kpi b{font-family:var(--pro-f-mono);font-weight:700;letter-spacing:-.04em;color:var(--pro-cl-tinta)}
+.pro-clinico .kpi>div:first-child b{font-size:2rem}
+/* tablas: cabecera tranquila, fila que responde */
+.pro-clinico .tabla-cont{border-color:var(--pro-cl-linea);border-radius:16px;box-shadow:var(--pro-cl-sombra-1)}
+.pro-clinico .tabla-cont th{text-transform:none;letter-spacing:0;font:650 .78rem var(--pro-f-texto);color:var(--pro-cl-tinta-2);background:#f6fafb}
+.pro-clinico .tabla-cont td{border-bottom-color:var(--pro-cl-linea)}
+.pro-clinico .tabla-cont tbody tr:hover td{background:rgba(15,138,108,.035)}
+/* pastillas de estado con punto */
+.pro-clinico .pastilla{font-size:.74rem;padding:.25rem .65rem .25rem .55rem;border:1px solid transparent}
+.pro-clinico .pastilla.v,.pro-clinico .pastilla.r,.pro-clinico .pastilla.a{gap:.4rem}
+.pro-clinico .pastilla.v::before,.pro-clinico .pastilla.r::before,.pro-clinico .pastilla.a::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.pro-clinico .pastilla.v{border-color:rgba(15,138,108,.22)} .pro-clinico .pastilla.r{border-color:rgba(192,58,58,.22)} .pro-clinico .pastilla.a{border-color:rgba(176,109,0,.22)}
+/* botones propios de la app */
+.pro-clinico .boton,.pro-clinico form button:not(.btn):not(.navbar-toggler):not(.accordion-button):not(.btn-close){border-radius:var(--pro-r-ctrl);min-height:44px;
+  box-shadow:0 1px 0 rgba(255,255,255,.22) inset,0 8px 18px -10px rgba(15,138,108,.6)}
+.pro-clinico .boton.claro{box-shadow:var(--pro-cl-sombra-1)}
+/* login: panel de marca + formulario limpio */
+.pro-clinico .login-caja{border-radius:28px;border-color:var(--pro-cl-linea);box-shadow:var(--pro-cl-sombra-3)}
+.pro-clinico .login-caja .lado{background:radial-gradient(520px 260px at 100% 0,rgba(127,227,193,.32),transparent 60%),linear-gradient(150deg,#0f8a6c 0%,#0b6f57 50%,#0b3d5c 120%)}
+.pro-clinico .login-caja .form h1{color:var(--pro-cl-tinta);letter-spacing:-.035em}
+.pro-clinico .demo-cuentas{background:var(--pro-cl-niebla);border:1px dashed rgba(12,33,49,.18);border-radius:14px}
+.pro-clinico .demo-cuentas code{font-weight:600}
+.pro-clinico .recibo{border-radius:16px;border-color:rgba(11,114,133,.25);box-shadow:var(--pro-cl-sombra-1)}
+.pro-clinico .linea-tiempo time{font-family:var(--pro-f-mono)}
+.pro-clinico .alert{border-radius:14px}
+
+/* ===========================================================================
+   7. Editorial — Guía de la demo (claro y oscuro)
+   =========================================================================== */
+.pro-editorial{--pro-foco:var(--st-verde)}
+.pro-editorial[data-bs-theme=light]{--bs-body-bg:#f6f8f9}
+.pro-editorial .barra-guia{box-shadow:0 1px 0 var(--st-linea),0 12px 30px -26px rgba(12,33,49,.4);border-bottom:0!important}
+.pro-editorial .barra-guia .navbar-brand span{font-family:var(--pro-f-titulo);letter-spacing:-.02em}
+/* buscador: aspecto de paleta de comandos, con la tecla «/» a la vista */
+.pro-editorial .buscador::after{content:"/";position:absolute;right:.6rem;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:1.45rem;height:1.45rem;
+  font:600 .75rem var(--pro-f-mono);color:var(--bs-secondary-color);border:1px solid var(--st-linea);border-bottom-width:2px;border-radius:6px;background:var(--st-superficie);
+  pointer-events:none;transition:opacity var(--pro-t-1) ease}
+.pro-editorial .buscador:focus-within::after{opacity:0}
+.pro-editorial .buscador .form-control{min-height:40px;padding-right:2.4rem;border:1px solid var(--st-linea);transition:border-color var(--pro-t-2) ease,box-shadow var(--pro-t-2) ease,background-color var(--pro-t-2) ease}
+.pro-editorial .buscador .form-control:focus{box-shadow:0 0 0 4px rgba(var(--st-verde-rgb),.14)}
+.pro-editorial .resultados{border-radius:16px;padding:.4rem;backdrop-filter:blur(16px);background:color-mix(in srgb,var(--st-superficie) 94%,transparent);
+  box-shadow:0 2px 2px rgba(0,0,0,.04),0 18px 40px -16px rgba(0,0,0,.3);transform-origin:top center;animation:pro-pop 160ms var(--pro-ease-out)}
+@keyframes pro-pop{from{opacity:0;transform:scale(.98) translateY(-4px)}to{opacity:1;transform:none}}
+.pro-editorial .resultados a{border-radius:10px}
+.pro-editorial .resultados a.activo{box-shadow:inset 0 0 0 1px rgba(var(--st-verde-rgb),.3)}
+/* índice lateral */
+.pro-editorial .lateral-guia .grupo{text-transform:none;letter-spacing:0;font:650 .78rem var(--pro-f-texto);color:var(--bs-secondary-color)}
+.pro-editorial .lateral-guia a.cap{transition:background-color var(--pro-t-1) ease,color var(--pro-t-1) ease;min-height:36px}
+.pro-editorial .lateral-guia a.cap.active{background:color-mix(in srgb,var(--st-verde) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--st-verde) 22%,transparent)}
+.pro-editorial .progreso-lectura span{background:linear-gradient(90deg,var(--st-verde),var(--st-azul))}
+/* lectura: medida cómoda, ritmo vertical y titulares con carácter */
+.pro-editorial .capitulo{max-width:900px}
+.pro-editorial .capitulo :is(p,li){max-width:70ch;line-height:1.72}
+.pro-editorial .cap-cab{gap:1.25rem;padding-bottom:1.4rem;margin-bottom:1.6rem;border-bottom:1px solid var(--st-linea)}
+.pro-editorial .cap-cab h1{font-size:clamp(1.9rem,3.6vw,2.75rem);font-weight:800;letter-spacing:-.04em;line-height:1.08}
+.pro-editorial .cap-cab .icono-cuadro{width:60px;height:60px;border-radius:18px;box-shadow:0 0 0 1px color-mix(in srgb,currentColor 18%,transparent),0 10px 24px -14px currentColor}
+.pro-editorial .capitulo h2{font-size:1.38rem;font-weight:760;letter-spacing:-.025em;margin-top:2.6rem;padding-top:1.4rem;border-top:1px solid var(--st-linea)}
+.pro-editorial .capitulo .cap-cab + * h2:first-child,.pro-editorial .capitulo h2:first-of-type{border-top:0;padding-top:0}
+.pro-editorial .capitulo h3{letter-spacing:-.015em}
+.pro-editorial :is(.idea,.analogia) b.t{text-transform:none;letter-spacing:0;font:700 .86rem var(--pro-f-titulo)}
+.pro-editorial .curso-card small{text-transform:none;letter-spacing:0;font:650 .78rem var(--pro-f-texto)}
+.pro-editorial :is(.idea,.analogia,.nota){border-radius:16px}
+.pro-editorial .portada-guia{border-radius:28px;box-shadow:0 0 0 1px var(--st-linea),0 24px 50px -30px rgba(12,33,49,.35)}
+.pro-editorial .portada-guia h1{letter-spacing:-.045em}
+.pro-editorial .portada-guia h1 span{color:inherit;opacity:.62}
+/* pestañas: bandeja segmentada con la activa elevada */
+.pro-editorial .pestanas{display:inline-flex;max-width:100%;gap:2px;padding:4px;border:1px solid var(--st-linea);border-radius:14px;background:var(--bs-tertiary-bg)}
+.pro-editorial .pestanas .nav-link{border:0;border-radius:10px;padding:.5rem .85rem;color:var(--bs-secondary-color);min-height:38px;
+  transition:background-color var(--pro-t-2) ease,color var(--pro-t-2) ease,box-shadow var(--pro-t-2) ease}
+.pro-editorial .pestanas .nav-link.active{background:var(--st-superficie);color:var(--bs-body-color);box-shadow:0 1px 2px rgba(0,0,0,.08),0 4px 10px -6px rgba(0,0,0,.22)}
+.pro-editorial .pestanas .nav-link.active i{color:var(--st-verde)}
+.pro-editorial .pestanas .nav-link:active{transform:scale(.97)}
+.pro-editorial .tab-content{padding-top:.4rem}
+/* diagramas (VLAN, corte, topología): lámina técnica con retícula fina */
+.pro-editorial .diagrama{position:relative;border-radius:20px;padding:1.2rem;background-color:var(--st-superficie);
+  background-image:linear-gradient(color-mix(in srgb,var(--st-azul) 7%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--st-azul) 7%,transparent) 1px,transparent 1px);
+  background-size:24px 24px;background-position:-1px -1px;box-shadow:0 0 0 1px var(--st-linea),0 18px 40px -28px rgba(12,33,49,.4);border:0}
+.pro-editorial .diagrama .d-caja{filter:drop-shadow(0 1px 1px rgba(12,33,49,.08)) drop-shadow(0 6px 10px rgba(12,33,49,.06))}
+.pro-editorial .diagrama .d-l.v{filter:drop-shadow(0 0 3px color-mix(in srgb,var(--st-verde) 60%,transparent))}
+.pro-editorial .diagrama .pie-dia{font-size:.82rem;padding-top:.6rem;border-top:1px dashed var(--st-linea)}
+.pro-editorial[data-bs-theme=dark] .diagrama .d-caja{filter:none}
+/* código y tablas explicativas */
+.pro-editorial .codigo{border-radius:16px;box-shadow:0 18px 36px -26px rgba(0,0,0,.55)}
+.pro-editorial .codigo pre{font-size:.86rem;line-height:1.7}
+.pro-editorial .codigo .copiar{border-radius:8px;transition:background-color var(--pro-t-1) ease,transform var(--pro-t-1) var(--pro-ease-out)}
+.pro-editorial .codigo .copiar:active{transform:scale(.95)}
+.pro-editorial .tabla-explica{border-radius:16px}
+.pro-editorial .tabla-explica th{text-transform:none;letter-spacing:0;font:650 .8rem var(--pro-f-texto)}
+.pro-editorial .flujo>div{border-radius:16px}
+.pro-editorial .matriz td{border-radius:10px;font-family:var(--pro-f-mono);font-size:.78rem}
+.pro-editorial .accordion{--bs-accordion-border-radius:14px;--bs-accordion-inner-border-radius:13px}
+
+/* ===========================================================================
+   8. Pantallas pequeñas, táctil y movimiento reducido
+   =========================================================================== */
+@media (max-width:991.98px){
+  .pro-clinico .panel-acciones{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"a a" "b c" "d d"}
+  .pro-clinico .kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:575.98px){
+  .pro-clinico .panel-acciones{grid-template-columns:1fr;grid-template-areas:"a" "b" "c" "d";gap:10px}
+  .pro-clinico .accion:nth-child(1){padding:1.25rem}
+  .pro-clinico .accion:nth-child(1) .ac-texto b{font-size:1.25rem}
+  .pro-clinico .accion:nth-child(2),.pro-clinico .accion:nth-child(3){grid-template-columns:auto minmax(0,1fr);align-items:center}
+  .pro-clinico .portada-portal{padding:3rem 0 6rem}
+  .pro-editorial .pestanas{display:flex}
+  .pro-editorial .cap-cab .icono-cuadro{width:48px;height:48px;border-radius:14px}
+}
+@media (pointer:coarse){
+  :is(.pro-clinico,.pro-editorial) .btn{min-height:44px}
+  .pro-editorial .lateral-guia a.cap{min-height:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  :is(.pro-noc,.pro-clinico,.pro-editorial) *{animation-duration:.01ms!important;animation-iteration-count:1!important}
+  .pro-centro .vivo i,.pro-centro .estado-pill.bien::before{box-shadow:0 0 0 3px rgba(61,220,151,.25)}
+  :is(.pro-noc,.pro-clinico,.pro-editorial) :is(.btn,.accion,.boton):active{transform:none}
+}
+
+/* ===========================================================================
+   9. v2 «Premium MedTech» (2026-11-14, noche) — piezas comunes
+   Aurora de color tras el contenido · cristal con desenfoque real · bento ·
+   tipografía masiva · botones píldora con destello e imán (movimiento.js).
+   =========================================================================== */
+:root{
+  --pro-cian:#46d9ff; --pro-cian-rgb:70,217,255; --pro-cian-2:#0aa6cc;
+  --pro-r-tile:28px; --pro-r-pildora:999px;
+  --pro-hueco:clamp(4.5rem,10vw,8.5rem);
+}
+/* aurora: manchas suaves fijas detrás de todo; se mueven muy despacio (solo transform, sin repintar) */
+@keyframes pro-deriva{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-3%,2%,0) scale(1.06)}100%{transform:translate3d(2%,-2%,0) scale(1.02)}}
+.pro-clinico body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+  background:radial-gradient(38% 34% at 18% 12%,rgba(20,163,127,.20),transparent 70%),radial-gradient(34% 30% at 86% 8%,rgba(56,189,248,.18),transparent 70%),
+  radial-gradient(40% 36% at 70% 82%,rgba(45,212,191,.14),transparent 70%),radial-gradient(30% 30% at 8% 88%,rgba(14,165,233,.10),transparent 70%);
+  animation:pro-deriva 48s ease-in-out infinite alternate}
+.pro-noc body::after{content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;
+  background:radial-gradient(34% 30% at 78% 6%,rgba(var(--pro-cian-rgb),.16),transparent 70%),radial-gradient(30% 28% at 10% 18%,rgba(20,184,166,.13),transparent 70%),
+  radial-gradient(36% 32% at 60% 92%,rgba(14,116,144,.20),transparent 72%);
+  animation:pro-deriva 56s ease-in-out infinite alternate}
+
+/* tipografía y ritmo */
+.titular-xl{font:800 clamp(2.9rem,7.4vw,6.4rem)/.97 var(--pro-f-titulo);letter-spacing:-.052em;text-wrap:balance;margin:0}
+.seccion{padding-block:var(--pro-hueco) 0}
+.seccion-cab{max-width:60rem;margin-bottom:clamp(1.75rem,4vw,3rem)}
+.seccion-cab h2{font:800 clamp(2.1rem,4.6vw,3.6rem)/1.02 var(--pro-f-titulo);letter-spacing:-.045em;margin:0 0 .9rem;text-wrap:balance}
+.seccion-cab p{font-size:clamp(1.05rem,1.6vw,1.22rem);line-height:1.6;margin:0;max-width:56ch}
+
+/* bento: 12 columnas, piezas de distinto tamaño según su importancia */
+.bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.bento > .s3{grid-column:span 3} .bento > .s4{grid-column:span 4} .bento > .s5{grid-column:span 5} .bento > .s6{grid-column:span 6}
+.bento > .s7{grid-column:span 7} .bento > .s8{grid-column:span 8} .bento > .s12{grid-column:span 12} .bento > .alto{grid-row:span 2}
+@media (max-width:991.98px){.bento > :is(.s3,.s4,.s5){grid-column:span 6} .bento > :is(.s6,.s7,.s8){grid-column:span 12} .bento > .alto{grid-row:auto}}
+@media (max-width:640px){.bento{gap:12px}.bento > *{grid-column:1 / -1 !important}}
+
+/* cristal: translúcido, desenfoque real y borde de 1 px semitransparente; brillo que sigue al puntero */
+.tile,.vidrio{position:relative;isolation:isolate;border-radius:var(--pro-r-tile);
+  -webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6)}
+.tile{padding:clamp(1.4rem,2.6vw,2.1rem);overflow:hidden}
+.tile::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 300ms ease;
+  background:radial-gradient(480px circle at var(--sx,50%) var(--sy,0%),var(--pro-foco-brillo,rgba(var(--pro-cian-rgb),.14)),transparent 46%)}
+@media (hover:hover) and (pointer:fine){.tile:hover::before{opacity:1}}
+a.tile{display:block;color:inherit;text-decoration:none;transition:transform 260ms var(--pro-ease-out),box-shadow 260ms var(--pro-ease-out),border-color 200ms ease}
+@media (hover:hover) and (pointer:fine){a.tile:hover{transform:translateY(-3px)}}
+a.tile:active{transform:scale(.985)}
+.pro-clinico :is(.tile,.vidrio){--pro-foco-brillo:rgba(20,163,127,.12);
+  background:linear-gradient(180deg,rgba(255,255,255,.80),rgba(255,255,255,.58));border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 0 0 1px rgba(12,33,49,.06),inset 0 1px 0 rgba(255,255,255,.95),0 2px 4px rgba(12,33,49,.04),0 26px 50px -26px rgba(12,33,49,.26)}
+.pro-noc :is(.tile,.vidrio),.pro-editorial[data-bs-theme=dark] :is(.tile,.vidrio){
+  background:linear-gradient(180deg,rgba(22,38,56,.62),rgba(9,17,27,.52));border:1px solid rgba(150,220,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.5),0 30px 60px -30px rgba(0,0,0,.9)}
+@media (hover:hover) and (pointer:fine){.pro-noc a.tile:hover{border-color:rgba(var(--pro-cian-rgb),.32)}}
+
+/* botones píldora: destello al pasar e imán (translate independiente de transform) */
+.boton{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:.6rem;min-height:54px;padding:0 1.6rem;
+  border-radius:var(--pro-r-pildora);border:1px solid transparent;font:650 1rem/1 var(--pro-f-texto);letter-spacing:-.01em;text-decoration:none;cursor:pointer;
+  translate:var(--iman-x,0) var(--iman-y,0);
+  transition:translate 420ms var(--pro-ease-out),transform 120ms var(--pro-ease-out),background-color 200ms ease,border-color 200ms ease,box-shadow 260ms ease,color 200ms ease}
+.boton i{font-size:1.1em}
+.boton:active{transform:scale(.97)}
+.boton::after{content:"";position:absolute;inset:0;pointer-events:none;transform:translateX(-130%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent);transition:transform 0s}
+@media (hover:hover) and (pointer:fine){.boton:hover::after{transform:translateX(130%) skewX(-18deg);transition:transform 750ms var(--pro-ease-out)}}
+.pro-noc .boton-primario{color:#02141b;background:linear-gradient(180deg,#7ae8ff,var(--pro-cian));
+  box-shadow:0 0 0 1px rgba(var(--pro-cian-rgb),.4),0 10px 30px -10px rgba(var(--pro-cian-rgb),.8),inset 0 1px 0 rgba(255,255,255,.5)}
+.pro-clinico .boton-primario{color:#fff;background:linear-gradient(180deg,#14a37f,#0b6f57);
+  box-shadow:0 0 0 1px rgba(11,111,87,.25),0 12px 28px -12px rgba(15,138,108,.8),inset 0 1px 0 rgba(255,255,255,.3)}
+.pro-noc .boton-cristal{color:#eaf6ff;background:rgba(255,255,255,.06);border-color:rgba(150,220,255,.18);backdrop-filter:blur(12px)}
+.pro-clinico .boton-cristal{color:var(--pro-cl-tinta);background:rgba(255,255,255,.72);border-color:rgba(12,33,49,.1);backdrop-filter:blur(12px);box-shadow:0 2px 8px -4px rgba(12,33,49,.2)}
+@media (hover:hover) and (pointer:fine){.pro-noc .boton-cristal:hover{background:rgba(255,255,255,.1);border-color:rgba(var(--pro-cian-rgb),.4)}
+  .pro-clinico .boton-cristal:hover{background:#fff}}
+/* los botones de Bootstrap del portal y la guía heredan imán y destello */
+:is(.pro-clinico,.pro-editorial) :is(.btn-primary,.btn-lg){position:relative;overflow:hidden;translate:var(--iman-x,0) var(--iman-y,0);
+  transition:translate 420ms var(--pro-ease-out),transform 120ms var(--pro-ease-out),background-color 200ms ease,border-color 200ms ease,box-shadow 260ms ease,color 200ms ease}
+:is(.pro-clinico,.pro-editorial) :is(.btn-primary,.btn-lg)::after{content:"";position:absolute;inset:0;pointer-events:none;transform:translateX(-130%) skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent)}
+@media (hover:hover) and (pointer:fine){:is(.pro-clinico,.pro-editorial) :is(.btn-primary,.btn-lg):hover::after{transform:translateX(130%) skewX(-18deg);transition:transform 750ms var(--pro-ease-out)}}
+
+/* icono en cuadro de cristal */
+.ico-cristal{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;font-size:1.4rem}
+.pro-noc .ico-cristal{color:var(--pro-cian);background:rgba(var(--pro-cian-rgb),.08);border:1px solid rgba(var(--pro-cian-rgb),.22);box-shadow:0 0 24px -8px rgba(var(--pro-cian-rgb),.6)}
+.pro-clinico .ico-cristal{color:#0b6f57;background:rgba(20,163,127,.10);border:1px solid rgba(20,163,127,.2)}
+
+@media (prefers-reduced-motion:reduce){
+  .pro-clinico body::before,.pro-noc body::after{animation:none}
+  .boton,:is(.pro-clinico,.pro-editorial) :is(.btn-primary,.btn-lg){translate:none}
+  .boton::after,:is(.pro-clinico,.pro-editorial) :is(.btn-primary,.btn-lg)::after{display:none}
+}
+
+/* ===========================================================================
+   10. v2 Clínico luminoso — portal (estático y app)
+   =========================================================================== */
+.pro-clinico .container-xl{max-width:1240px}
+.pro-clinico .heroe-portal{padding:clamp(4.5rem,9vw,7.5rem) 0 clamp(2.5rem,5vw,4rem);text-align:center}
+.pro-clinico .heroe-portal .titular-xl{max-width:14ch;margin-inline:auto;color:var(--pro-cl-tinta);
+  background:linear-gradient(180deg,#0c2131 40%,#1d5a68);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pro-clinico .titular-suave{display:block;margin-top:.12em;font-size:.62em;letter-spacing:-.045em;opacity:.62}
+.pro-clinico .heroe-lead{max-width:42rem;margin:1.6rem auto 0;font-size:clamp(1.08rem,1.7vw,1.3rem);line-height:1.6;color:var(--pro-cl-tinta-2)}
+.pro-clinico .heroe-acciones{display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;margin-top:2.2rem}
+.pro-clinico .heroe-acciones.izq{justify-content:flex-start;margin-top:1.6rem}
+.pro-clinico .confianza{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;margin-top:1.6rem}
+.pro-clinico .confianza span{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .85rem;border-radius:999px;font-size:.84rem}
+.pro-clinico .heroe-escena{display:flex;justify-content:center;margin-top:clamp(2.5rem,6vw,4.5rem)}
+.pro-clinico .heroe-escena .maqueta-wrap{width:min(580px,100%);padding:1.6rem 2.2rem}
+.pro-clinico .heroe-escena .maqueta-wrap::before{content:"";position:absolute;inset:8% 4%;z-index:-1;border-radius:40px;filter:blur(40px);
+  background:radial-gradient(60% 60% at 30% 40%,rgba(20,163,127,.35),transparent 70%),radial-gradient(50% 50% at 75% 60%,rgba(56,189,248,.3),transparent 70%)}
+.pro-clinico .heroe-escena .maqueta{text-align:left;-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);background:rgba(255,255,255,.72)}
+.pro-clinico .heroe-escena .flotante.a{left:-1.4rem;bottom:.2rem} .pro-clinico .heroe-escena .flotante.b{right:-1.6rem;top:-.4rem}
+.pro-clinico .accesos{margin-top:clamp(1rem,3vw,2rem)}
+.pro-clinico .seccion-cab h2,.pro-clinico .titulo-xl2{color:var(--pro-cl-tinta)}
+.pro-clinico .titulo-xl2{font:800 clamp(2rem,4vw,3rem)/1.04 var(--pro-f-titulo);letter-spacing:-.045em;margin-bottom:1rem}
+.pro-clinico .seccion-cab p{color:var(--pro-cl-tinta-2)}
+.pro-clinico .seccion-accion{display:flex;justify-content:center;margin-top:1.6rem}
+.pro-clinico .seccion-final{padding-bottom:clamp(3rem,6vw,5rem)}
+/* pasos: tres piezas con la cifra de orden grande (es una secuencia real) */
+.pro-clinico .paso-tile{min-height:240px;display:flex;flex-direction:column}
+.pro-clinico .paso-n{font:800 clamp(2.8rem,5vw,3.8rem)/1 var(--pro-f-titulo);letter-spacing:-.06em;background:linear-gradient(180deg,#14a37f,#0b3d5c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pro-clinico :is(.paso-tile,.esp-tile,.tile-cifras,.tile-confianza) h3{margin:auto 0 .45rem;padding-top:1.4rem;font:750 1.25rem/1.2 var(--pro-f-titulo);letter-spacing:-.025em;color:var(--pro-cl-tinta)}
+.pro-clinico :is(.paso-tile,.esp-tile) p{margin:0;color:var(--pro-cl-tinta-2);font-size:.95rem;line-height:1.55}
+/* especialidades: bento con la general como pieza grande */
+.pro-clinico .esp-tile{display:flex!important;flex-direction:column;min-height:220px}
+.pro-clinico .esp-tile.alto h3{font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.04em}
+.pro-clinico .esp-tile.alto p{font-size:1.05rem;max-width:34ch}
+.pro-clinico .esp-tile .chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:1rem}
+.pro-clinico .esp-tile .chips span{font:600 .74rem var(--pro-f-texto);padding:.25rem .6rem;border-radius:999px;color:var(--pro-cl-marca-2);background:var(--pro-cl-marca-suave);border:1px solid rgba(15,138,108,.18)}
+.pro-clinico .esp-tile::after{content:"\f144";font-family:"bootstrap-icons";position:absolute;top:1.5rem;right:1.5rem;color:var(--pro-cl-tinta-3);transition:transform 260ms var(--pro-ease-out),color 200ms ease}
+@media (hover:hover) and (pointer:fine){.pro-clinico .esp-tile:hover::after{transform:translate(3px,-3px);color:var(--pro-cl-marca)}}
+/* almacén y cifras medidas */
+.pro-clinico .tile-confianza h2{font:800 clamp(1.7rem,3.2vw,2.5rem)/1.08 var(--pro-f-titulo);letter-spacing:-.04em;color:var(--pro-cl-tinta);margin:0 0 1rem;max-width:20ch}
+.pro-clinico .tile-confianza > p{color:var(--pro-cl-tinta-2);max-width:56ch}
+.pro-clinico .tile-confianza .flujo-portal{margin-top:1.4rem}
+.pro-clinico .tile-cifras h3{margin:0 0 .4rem;padding:0}
+.pro-clinico .tile-cifras .cifra-g{padding:1.1rem 0;border-top:1px solid var(--pro-cl-linea)}
+.pro-clinico .tile-cifras .cifra-g:first-of-type{border-top:0}
+.pro-clinico .tile-cifras .cifra-g b{display:block;font:800 clamp(2.2rem,4vw,3rem)/1 var(--pro-f-titulo);letter-spacing:-.05em;
+  background:linear-gradient(180deg,#0c2131,#0f8a6c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pro-clinico .tile-cifras .cifra-g span{display:block;margin-top:.35rem;font-size:.9rem;color:var(--pro-cl-tinta-2)}
+.pro-clinico .banda-cta h2{font:800 clamp(1.8rem,3.4vw,2.6rem)/1.05 var(--pro-f-titulo);letter-spacing:-.04em}
+.pro-clinico .banda-cta{padding:clamp(2rem,4vw,3.2rem)}
+/* cristal en lo que queda de Bootstrap: tarjetas, listas, acordeón, paneles y menú lateral de la app */
+.pro-clinico :is(.card,.lista-filas,.panel,.lateral,.tabla-cont,.accordion-item,.indice-pag,.login-caja .form,.accion:not(:first-child)){
+  -webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5)}
+.pro-clinico :is(.card,.panel,.lateral,.accordion-item){background:rgba(255,255,255,.74);border-color:rgba(255,255,255,.85);
+  box-shadow:0 0 0 1px rgba(12,33,49,.06),inset 0 1px 0 rgba(255,255,255,.95),0 2px 4px rgba(12,33,49,.04),0 24px 46px -26px rgba(12,33,49,.24)}
+.pro-clinico .kpi>div{background:rgba(255,255,255,.74);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border-color:rgba(255,255,255,.85)}
+.pro-clinico .panel{border-radius:24px}
+.pro-clinico .seccion-blanca{background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.pro-clinico .cabecera-int{background:transparent;border-bottom:0;padding-top:clamp(3rem,6vw,4.5rem)}
+.pro-clinico .cabecera-int h1{font-size:clamp(2.2rem,5vw,3.6rem);letter-spacing:-.045em;line-height:1.02}
+.pro-clinico .cab-app h1{font-size:clamp(1.9rem,3.6vw,2.8rem);letter-spacing:-.045em}
+.pro-clinico .barra-portal{background:rgba(255,255,255,.62)}
+@media (max-width:991.98px){.pro-clinico .heroe-escena .flotante{display:none}}
+@media (max-width:575.98px){.pro-clinico .heroe-escena .maqueta-wrap{padding:0}.pro-clinico .heroe-acciones .boton{width:100%}}
+
+.pro-clinico .esp-tile.alto .ico-cristal{width:76px;height:76px;border-radius:22px;font-size:2.1rem}
+.pro-clinico .esp-tile.alto{background:radial-gradient(420px 300px at 85% 10%,rgba(20,163,127,.12),transparent 70%),linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.6))}
+
+/* ===========================================================================
+   11. v2 Editorial — guía: aurora tenue (la lectura manda), cristal y cifras grandes
+   =========================================================================== */
+.pro-editorial body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;opacity:.8;
+  background:radial-gradient(34% 30% at 85% 6%,rgba(20,163,127,.13),transparent 70%),radial-gradient(30% 28% at 15% 90%,rgba(56,189,248,.10),transparent 70%);
+  animation:pro-deriva 60s ease-in-out infinite alternate}
+.pro-editorial[data-bs-theme=dark] body::before{background:radial-gradient(34% 30% at 85% 6%,rgba(var(--pro-cian-rgb),.10),transparent 70%),radial-gradient(30% 28% at 15% 90%,rgba(20,184,166,.08),transparent 70%)}
+.pro-editorial[data-bs-theme=light] :is(.tile,.vidrio){background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.62));border:1px solid rgba(255,255,255,.8);
+  box-shadow:0 0 0 1px rgba(12,33,49,.07),inset 0 1px 0 rgba(255,255,255,.95),0 22px 44px -26px rgba(12,33,49,.25);--pro-foco-brillo:rgba(20,163,127,.12)}
+.pro-editorial :is(.portada-guia,.diagrama,.idea,.analogia,.nota,.tabla-explica,.lista-cursos){-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+.pro-editorial .portada-guia h1{font-size:clamp(2.4rem,5.4vw,4.4rem);letter-spacing:-.05em;line-height:1}
+.pro-editorial .cap-cab h1{font-size:clamp(2.2rem,4.6vw,3.6rem);letter-spacing:-.048em}
+.pro-editorial .cifras-medidas{margin:1rem 0 1.4rem}
+.pro-editorial .cifra-tile{display:flex;flex-direction:column;gap:.3rem;padding:1.5rem 1.6rem}
+.pro-editorial .cifra-xl{font:800 clamp(2.4rem,4.6vw,3.4rem)/1 var(--pro-f-titulo);letter-spacing:-.055em;margin-bottom:.9rem;
+  background:linear-gradient(180deg,var(--bs-body-color) 25%,var(--st-verde));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pro-editorial .cifra-tile b{font:700 1rem/1.35 var(--pro-f-titulo);letter-spacing:-.015em}
+.pro-editorial .cifra-tile > span:last-child{font-size:.85rem;color:var(--bs-secondary-color)}
+@media (prefers-reduced-motion:reduce){.pro-editorial body::before{animation:none}}
